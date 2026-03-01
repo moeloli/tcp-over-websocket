@@ -604,23 +604,22 @@ func dnsPreferIp(hostname string) (string, uint32) {
 		if err != nil {
 			log.Print("Run ipconfig error: ", err)
 		} else {
-			re := regexp.MustCompile(`(?m)^\s+DNS .+: ([0-9.]+)`)
+			re := regexp.MustCompile(`(?m)^\s+DNS .+: .+\n?.+?([0-9.]+)`)
 			matches := re.FindAllStringSubmatch(string(output), -1)
 			if len(matches) > 0 {
 				systemDns = matches[0][1]
 			}
 		}
 	}
+	log.Print("System DNS ", systemDns)
 	r, _, err := uc.Exchange(&m, systemDns+":53")
 	if err != nil {
-		// log.Print("Local DNS Fail: ", err)
+		log.Print("Use System DNS Fail: ", err)
 		r, _, err = tc.Exchange(&m, "208.67.222.222:5353")
 		if err != nil {
 			log.Print("OpenDNS Fail: ", err)
 			return "", 0
 		}
-	} else {
-		log.Print("Use System DNS ", systemDns)
 	}
 	if len(r.Answer) == 0 {
 		log.Print("Could not found NS records")
