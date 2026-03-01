@@ -1,7 +1,7 @@
 // Tcp over WebSocket (tcp2ws)
 // 基于ws的内网穿透工具
 // Sparkle 20210430
-// 11.2
+// v11.3
 
 package main
 
@@ -604,7 +604,7 @@ func dnsPreferIp(hostname string) (string, uint32) {
 		if err != nil {
 			log.Print("Run ipconfig error: ", err)
 		} else {
-			re := regexp.MustCompile(`(?m)^\s+DNS .+: .+\n?.+?([0-9.]+)`)
+			re := regexp.MustCompile(`(?m)^\s+DNS1 .+: .+\n?.+?([0-9.]+)`)
 			matches := re.FindAllStringSubmatch(string(output), -1)
 			if len(matches) > 0 {
 				systemDns = matches[0][1]
@@ -615,7 +615,7 @@ func dnsPreferIp(hostname string) (string, uint32) {
 	r, _, err := uc.Exchange(&m, systemDns+":53")
 	if err != nil {
 		log.Print("Use System DNS Fail: ", err)
-		r, _, err = tc.Exchange(&m, "208.67.222.222:5353")
+		r, _, err = tc.Exchange(&m, "208.67.222.222:53")
 		if err != nil {
 			log.Print("OpenDNS Fail: ", err)
 			return "", 0
@@ -663,7 +663,7 @@ func dnsPreferIpWithTtl(hostname string, ttl uint32) {
 func main() {
 	arg_num := len(os.Args)
 	if arg_num < 3 {
-		fmt.Println("TCP over WebSocket (tcp2ws) with UDP support 11.2\nhttps://github.com/zanjie1999/tcp-over-websocket")
+		fmt.Println("TCP over WebSocket (tcp2ws) with UDP support v11.3\nhttps://github.com/zanjie1999/tcp-over-websocket")
 		fmt.Println("Client: ws://tcp2wsUrl localPort\nServer: ip:port tcp2wsPort\nUse wss: ip:port tcp2wsPort server.crt server.key")
 		fmt.Println("Make ssl cert:\nopenssl genrsa -out server.key 2048\nopenssl ecparam -genkey -name secp384r1 -out server.key\nopenssl req -new -x509 -sha256 -key server.key -out server.crt -days 36500")
 		os.Exit(0)
